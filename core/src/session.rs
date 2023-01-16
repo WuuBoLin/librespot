@@ -172,8 +172,12 @@ impl Session {
             }
         };
 
-        info!("Authenticated as \"{}\" !", reusable_credentials.username);
-        self.set_username(&reusable_credentials.username);
+        let username = match reusable_credentials.username.as_ref() {
+            Some(username) => username,
+            _ => &"UNKNOWN".to_string(),
+        };
+        info!("Authenticated as '{username}' !");
+        self.set_username(username);
         if let Some(cache) = self.cache() {
             if store_credentials {
                 let cred_changed = cache
