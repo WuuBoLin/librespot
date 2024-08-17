@@ -32,7 +32,8 @@ fn get_authcode_stdin() -> AuthorizationCode {
     get_code(buffer.trim())
 }
 
-fn get_authcode_listener(socket_address: SocketAddr) -> AuthorizationCode {
+fn get_authcode_listener(redirect_port: u16) -> AuthorizationCode {
+    let socket_address = SocketAddr::new(IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0)), redirect_port);
     // A very naive implementation of the redirect server.
     let listener = TcpListener::bind(socket_address).unwrap();
 
@@ -120,7 +121,7 @@ pub fn get_access_token(client_id: &str, redirect_port: u16) -> String {
     println!("Browse to: {}", auth_url);
 
     let code = if redirect_port > 0 {
-        get_authcode_listener(redirect_address)
+        get_authcode_listener(redirect_port)
     } else {
         get_authcode_stdin()
     };
